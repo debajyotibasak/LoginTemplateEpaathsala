@@ -14,9 +14,6 @@ import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by DROID on 07-01-2017.
- */
 
 public class SignupActivity extends AppCompatActivity{
 
@@ -101,7 +98,7 @@ public class SignupActivity extends AppCompatActivity{
         }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Please Enter All Fields correctly", Toast.LENGTH_LONG).show();
 
         _signupButton.setEnabled(true);
     }
@@ -158,5 +155,13 @@ public class SignupActivity extends AppCompatActivity{
         }
 
         return valid;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(SignupActivity.this, LoginActivity.class));
+        overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+        finish();
     }
 }
