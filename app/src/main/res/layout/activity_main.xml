@@ -11,4 +11,35 @@
     android:fitsSystemWindows="true"
     tools:context="com.epaathsala.sourceylogin.MainActivity">
 
+    <TextView
+        android:id="@+id/Welcome_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="WELCOME"
+        android:textSize="56sp"
+        android:textColor="@color/primary"
+        android:textAlignment="center"
+        android:padding="16dp"/>
+
+    <TextView
+        android:id="@+id/Name_in_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Welcome_text"
+        android:text="User"
+        android:textSize="34sp"
+        android:textAlignment="center"
+        android:padding="8dp"/>
+
+    <TextView
+        android:id="@+id/Logged_in_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/Name_in_text"
+        android:text="You are now Logged in."
+        android:textSize="26sp"
+        android:textAlignment="center"
+        android:padding="8dp"/>
+
 </RelativeLayout>
