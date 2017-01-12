@@ -2,6 +2,7 @@ package com.epaathsala.sourceylogin;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,9 +16,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class SignupActivity extends AppCompatActivity{
+public class SignupActivity extends AppCompatActivity {
 
     private static final String TAG = "SignupActivity";
+
+    LoginDataBaseAdapter loginDataBaseAdapter;
 
     @Bind(R.id.input_name) EditText _nameText;
     @Bind(R.id.input_specialization) EditText _specializationText;
@@ -29,10 +32,12 @@ public class SignupActivity extends AppCompatActivity{
     @Bind(R.id.link_login) TextView _loginLink;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
+
+        loginDataBaseAdapter = new LoginDataBaseAdapter(this);
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +50,7 @@ public class SignupActivity extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
                 overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
@@ -63,11 +68,12 @@ public class SignupActivity extends AppCompatActivity{
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
-                R.style.AppTheme_Dark_Dialog);
+        final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this, R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
+
+
 
         String name = _nameText.getText().toString();
         String specialization = _specializationText.getText().toString();
@@ -76,7 +82,9 @@ public class SignupActivity extends AppCompatActivity{
         String password = _passwordText.getText().toString();
         String reEnterPassword = _reEnterPasswordText.getText().toString();
 
-        // TODO: Implement your own signup logic here.
+        // TODO: Implementing signup logic here.
+        loginDataBaseAdapter.insertData(name, specialization, email, password);
+
 
         new android.os.Handler().postDelayed(
                 new Runnable() {
@@ -87,15 +95,20 @@ public class SignupActivity extends AppCompatActivity{
                         // onSignupFailed();
                         progressDialog.dismiss();
                     }
-                }, 3000);
+                }, 1000);
     }
 
-    public void onSignupSuccess()
-        {
-            _signupButton.setEnabled(true);
-            setResult(RESULT_OK, null);
-            finish();
-        }
+    public void onSignupSuccess() {
+        _signupButton.setEnabled(true);
+
+        Toast.makeText(this, "Account Created", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+
+        setResult(RESULT_OK, null);
+        finish();
+    }
 
     public void onSignupFailed() {
         Toast.makeText(getBaseContext(), "Please Enter All Fields correctly", Toast.LENGTH_LONG).show();
@@ -113,6 +126,7 @@ public class SignupActivity extends AppCompatActivity{
         String password = _passwordText.getText().toString();
         String reEnterPassword = _reEnterPasswordText.getText().toString();
 
+        //check if name is of atleast 3 characters
         if (name.isEmpty() || name.length() < 3) {
             _nameText.setError("at least 3 characters");
             valid = false;
@@ -120,12 +134,15 @@ public class SignupActivity extends AppCompatActivity{
             _nameText.setError(null);
         }
 
+        //check if Email Address field is empty
         if (specialization.isEmpty()) {
             _specializationText.setError("Enter Valid Address");
             valid = false;
         } else {
             _specializationText.setError(null);
         }
+
+        //check if pattern of email Address Matches
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailText.setError("enter a valid email address");
             valid = false;
@@ -133,6 +150,7 @@ public class SignupActivity extends AppCompatActivity{
             _emailText.setError(null);
         }
 
+        //check if mobile number is valid
         if (mobile.isEmpty() || mobile.length() != 10) {
             _mobileText.setError("Enter Valid Mobile Number");
             valid = false;
@@ -140,6 +158,7 @@ public class SignupActivity extends AppCompatActivity{
             _mobileText.setError(null);
         }
 
+        //check if the password is between the limit
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
             _passwordText.setError("between 4 and 10 alphanumeric characters");
             valid = false;
@@ -147,6 +166,7 @@ public class SignupActivity extends AppCompatActivity{
             _passwordText.setError(null);
         }
 
+        //check if password and re-enter password match
         if (reEnterPassword.isEmpty() || reEnterPassword.length() < 4 || reEnterPassword.length() > 10 || !(reEnterPassword.equals(password))) {
             _reEnterPasswordText.setError("Password Do not match");
             valid = false;
@@ -157,6 +177,7 @@ public class SignupActivity extends AppCompatActivity{
         return valid;
     }
 
+    //what happens when back button is pressed.
     @Override
     public void onBackPressed() {
         super.onBackPressed();
